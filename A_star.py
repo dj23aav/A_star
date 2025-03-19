@@ -2,6 +2,7 @@ import pygame
 import cv2
 import numpy as np
 import heapq
+import time
 
 
 GRID_SIZE = 20  # Set to match GridWorld default
@@ -50,13 +51,20 @@ class GridWorld:
         heapq.heappush(open_list, start_node)
 
         while open_list:
+
+
             current = heapq.heappop(open_list)
 
             if current.position == self.goal_pos:
+
                 self.path = self.reconstruct_path(current)
                 return True  # Path found
 
+
             closed_set.add(current.position)
+            self.visited_cells.add(current.position)
+            self.draw()
+            time.sleep(0.002)
 
             for new_pos in self.get_neighbors(current.position):
                 if new_pos in self.obstacles or new_pos in closed_set:
@@ -69,7 +77,11 @@ class GridWorld:
 
                 heapq.heappush(open_list, new_node)
 
+
         return False  # No path found
+
+
+
 
     def get_neighbors(self, position):
         x, y = position
@@ -83,16 +95,21 @@ class GridWorld:
         return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])  # Manhattan Distance
 
     def reconstruct_path(self, current):
+
         path = []
         while current is not None:
             path.append(current.position)
+
             current = current.parent
+
         path.reverse()
         return path
     def draw(self):
+
         screen.fill(WHITE)
         for x in range(self.size):
             for y in range(self.size):
+
                 rect = pygame.Rect(y * CELL_SIZE, x * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 
                 if (x, y) in self.visited_cells:
@@ -105,7 +122,9 @@ class GridWorld:
                     pygame.draw.rect(screen, GREEN, rect)
                 elif (x,y) in self.obstacles:
                     pygame.draw.rect(screen, BLACK, rect)
+
                 elif (x,y) in self.path:
+                    rect = pygame.Rect(y * CELL_SIZE, x * CELL_SIZE, CELL_SIZE, CELL_SIZE)
                     pygame.draw.rect(screen, RED, rect)
 
 
@@ -115,6 +134,7 @@ class GridWorld:
                 screen.blit(text_surface, (y * CELL_SIZE + 5, x * CELL_SIZE + 5))
 
         pygame.display.flip()
+
 
 
 
@@ -169,7 +189,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+   # time.sleep(.25)
     gw.draw()
+
+
+
 
 pygame.quit()
 
