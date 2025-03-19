@@ -15,6 +15,18 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("A* Pathfinding")
 
+class Node:
+    def __init__(self, position, parent=None):
+        self.position = position
+        self.parent = parent
+        self.g = 0  # Cost from start to current node
+        self.h = 0  # Heuristic (Manhattan distance to goal)
+        self.f = 0  # Total cost (g + h)
+
+    def __lt__(self, other):
+        return self.f < other.f  # Compare nodes based on f-value
+
+
 class GridWorld:
     def __init__(self, size=20):
         self.size = size
@@ -83,7 +95,7 @@ for i in range(output_height):
 
 # Print the 2D binary array
 print(binary_array)
-print(obstacle)
+
 
 
 
