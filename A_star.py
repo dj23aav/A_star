@@ -59,3 +59,28 @@ while running:
 pygame.quit()
 
 
+
+import cv2
+import numpy as np
+
+def image_to_binary_array(image_path, new_width, new_height, threshold=128):
+    # Load the image in grayscale
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+    # Resize the image to the desired resolution
+    img_resized = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_NEAREST)
+
+    # Apply thresholding to convert to binary (1s and 0s)
+    _, binary_img = cv2.threshold(img_resized, threshold, 1, cv2.THRESH_BINARY)
+
+    return binary_img
+
+# Example usage
+image_path = "your_image.png"  # Replace with your image path
+output_width = 20   # Desired output width
+output_height = 20  # Desired output height
+
+binary_array = image_to_binary_array(image_path, output_width, output_height)
+
+# Print the 2D binary array
+print(binary_array)
