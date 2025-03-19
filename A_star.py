@@ -87,6 +87,7 @@ print(obstacle)
 
 
 
+
 gw = GridWorld()
 for i in obstacle:
     gw.obstacles.append(i)
