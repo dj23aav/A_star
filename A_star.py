@@ -1,6 +1,7 @@
 import pygame
 import cv2
 import numpy as np
+import heapq
 
 
 GRID_SIZE = 20  # Set to match GridWorld default
@@ -27,6 +28,7 @@ class Node:
         return self.f < other.f  # Compare nodes based on f-value
 
 
+
 class GridWorld:
     def __init__(self, size=20):
         self.size = size
@@ -39,6 +41,54 @@ class GridWorld:
 
         self.font = pygame.font.Font(None, 24)  # Font for text rendering
 
+    def a_star(self):
+        start_node = Node(self.agent_pos)
+        goal_node = Node(self.goal_pos)
+
+        open_list = []
+        closed_set = set()
+        heapq.heappush(open_list, start_node)
+
+        while open_list:
+            current = heapq.heappop(open_list)
+
+            if current.position == self.goal_pos:
+                self.path = self.reconstruct_path(current)
+                return True  # Path found
+
+            closed_set.add(current.position)
+
+            for new_pos in self.get_neighbors(current.position):
+                if new_pos in self.obstacles or new_pos in closed_set:
+                    continue
+
+                new_node = Node(new_pos, current)
+                new_node.g = current.g + 1
+                new_node.h = self.heuristic(new_pos, self.goal_pos)
+                new_node.f = new_node.g + new_node.h
+
+                heapq.heappush(open_list, new_node)
+
+        return False  # No path found
+
+    def get_neighbors(self, position):
+        x, y = position
+        neighbors = [
+            (x - 1, y), (x + 1, y),
+            (x, y - 1), (x, y + 1)
+        ]
+        return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.size and 0 <= ny < self.size]
+
+    def heuristic(self, pos1, pos2):
+        return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])  # Manhattan Distance
+
+    def reconstruct_path(self, current):
+        path = []
+        while current is not None:
+            path.append(current.position)
+            current = current.parent
+        path.reverse()
+        return path
     def draw(self):
         screen.fill(WHITE)
         for x in range(self.size):
@@ -55,6 +105,9 @@ class GridWorld:
                     pygame.draw.rect(screen, GREEN, rect)
                 elif (x,y) in self.obstacles:
                     pygame.draw.rect(screen, BLACK, rect)
+                elif (x,y) in self.path:
+                    pygame.draw.rect(screen, RED, rect)
+
 
 
                 # Draw cell coordinates for reference
@@ -104,7 +157,12 @@ gw = GridWorld()
 for i in obstacle:
     gw.obstacles.append(i)
 print(gw.obstacles)
-# Main loop
+
+if gw.a_star():
+    print("Path Found:", gw.path)
+else:
+    print("No Path Found!")
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -114,6 +172,4 @@ while running:
     gw.draw()
 
 pygame.quit()
-
-
 
