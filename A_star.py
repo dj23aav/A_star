@@ -83,6 +83,7 @@ for i in range(output_height):
 
 # Print the 2D binary array
 print(binary_array)
+print(obstacle)
 
 
 
