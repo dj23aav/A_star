@@ -67,7 +67,7 @@ The visualization will show the A* algorithm in action. The following color sche
 
 ### Example Output
 
-![Example Output](screenshot.png)  <!-- Add a screenshot of the output here -->
+https://github.com/dj23aav/A_star/blob/main/Screenshot%202025-03-23%20133115.png  <!-- Add a screenshot of the output here -->
 
 ## Code Description
 
